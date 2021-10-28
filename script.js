@@ -1,6 +1,6 @@
 let allValues = [];
 let valueInput = '';
-let valueSumm = 0;
+let valueSumm = null;
 let input = null;
 let summ = null;
 let count = 0;
@@ -30,16 +30,18 @@ const getDay = () => {
 }
 
 const onClickButton = () => {
-  allValues.push({
-    text: valueInput,
-    summ: valueSumm,
-    date: getDay()
-  });
-  valueInput = '';
-  valueSumm = 0;
-  input.value = '';
-  summ.value = '';
-  render();
+  if (valueInput !== '' && valueSumm !== null && !isNaN(valueSumm)) {
+    allValues.push({
+      text: valueInput,
+      summ: valueSumm,
+      date: getDay()
+    });
+    valueInput = '';
+    valueSumm = 0;
+    input.value = '';
+    summ.value = '';
+    render();
+  }
 };
 
 const render = () => {
@@ -56,12 +58,15 @@ const render = () => {
     container.appendChild(num);
     const text = document.createElement('p');
     text.innerText = item.text;
+    text.id = 'text';
     container.appendChild(text);
     const date = document.createElement('p');
     date.innerText = item.date;
+    date.id = 'date';
     container.appendChild(date);
     const summ = document.createElement('p');
     summ.innerText = `${item.summ} p.`;
+    summ.id = 'summ';
     container.appendChild(summ);
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
@@ -93,18 +98,22 @@ const render = () => {
   })
   const countRender = document.getElementById('countOf');
   countRender.innerText = count;
-  count = 0;
+  count = null;
 }
 
 const editVal = (text, inputVal, container, inputSumm, summ, item) => {
-  text.innerText = inputVal.value;
-  item.text = inputVal.value;
-  container.replaceChild(text, inputVal);
-  summ.innerText = `${inputSumm.value} p.`;
-  item.summ = inputSumm.value;
-  container.replaceChild(summ, inputSumm);
-  render();
-}
+  if (!isNaN(inputSumm.value)) {
+    text.innerText = inputVal.value;
+    item.text = inputVal.value;
+    container.replaceChild(text, inputVal);
+    summ.innerText = `${inputSumm.value} p.`;
+    item.summ = inputSumm.value;
+    container.replaceChild(summ, inputSumm);
+    render();
+  } else {
+    render();
+  };
+  };
 
 const deleteVal = (index) => {
   allValues = allValues.filter((item, index1) => (index1 !== index));
