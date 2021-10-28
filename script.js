@@ -58,9 +58,28 @@ const render = () => {
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
     container.appendChild(imageEdit);
+    imageEdit.onclick = () => {
+      imageEdit.className = 'far fa-check-square';
+      imageDelete.className = 'fas fa-backspace';
+      const inputVal = document.createElement('input');
+      inputVal.value = text.innerText;
+      container.replaceChild(inputVal, text);
+      const inputSumm = document.createElement('input');
+      inputSumm.value = item.summ;
+      container.replaceChild(inputSumm, summ);
+      imageEdit.onclick = () => {
+        editVal(text, inputVal, container, inputSumm, summ, item);
+      }
+      imageDelete.onclick = () => {
+        render();
+      }
+    }
     const imageDelete = document.createElement('i');
     imageDelete.className = 'far fa-trash-alt';
     container.appendChild(imageDelete);
+    imageDelete.onclick = () => {
+      deleteVal(index);
+    }
     content.appendChild(container);
     count = count + Number(item.summ);
   })
@@ -68,3 +87,18 @@ const render = () => {
   countRender.innerText = count;
   count = 0;
 }
+
+const editVal = (text, inputVal, container, inputSumm, summ, item) => {
+  text.innerText = inputVal.value;
+  item.text = inputVal.value;
+  container.replaceChild(text, inputVal);
+  summ.innerText = `${inputSumm.value} p.`;
+  item.summ = inputSumm.value;
+  container.replaceChild(summ, inputSumm);
+  render();
+}
+
+const deleteVal = (index) => {
+  allValues = allValues.filter((item, index1) => (index1 !== index));
+  render();
+};
