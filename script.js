@@ -20,12 +20,20 @@ const updateSumm = (event) => {
   valueSumm = event.target.value;
 };
 
+const getDay = () => {
+  let day = new Date();
+  let dd = String(day.getDate()).padStart(2, '0');
+  let mm = String(day.getMonth() + 1).padStart(2, '0');
+  let yyyy = day.getFullYear();
+  day = dd + '.' + mm + '.' + yyyy;
+  return day;
+}
 
 const onClickButton = () => {
   allValues.push({
     text: valueInput,
     summ: valueSumm,
-    date: '101010'
+    date: getDay()
   });
   valueInput = '';
   valueSumm = 0;
@@ -102,3 +110,4 @@ const deleteVal = (index) => {
   allValues = allValues.filter((item, index1) => (index1 !== index));
   render();
 };
+
