@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,20 +11,26 @@
 
   <title>Мои расходы</title>
 </head>
+
 <body>
   <h1>Учет моих расходов</h1>
-  <div class='main-div'>
-    <div class='first-input'>
-      <p>Куда было потрачено:</p>
-      <input type="text" id='input1'>
+  <div class='main'>
+    <div class='main-div'>
+      <div class='first-input'>
+        <p>Куда было потрачено:</p>
+        <input type="text" id='input1' placeholder="Куда было потрачено">
+      </div>
+      <div class='second-input'>
+        <p>Сколько было потрачено:</p>
+        <input type="text" id='input2' placeholder='Сколько было потрачено'>
+      </div>
+      <button onclick="onClickButton()">Добавить</button>
     </div>
-    <div class='second-input'>
-      <p>Сколько было потрачено:</p>
-      <input type="text" id='input2'>
-    </div>
-<button onclick="onClickButton()">Добавить</button>
+    <div class='counter'><span id='count-container'>Итого:<p id='countOf'>0</p>р.</span></div>
   </div>
-  <span id='count-container'>Итого:<p id='countOf'>0</p>р.</span>
+
+
   <div id='content'></div>
 </body>
+
 </html>
