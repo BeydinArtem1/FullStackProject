@@ -6,7 +6,8 @@ let summ = null;
 let count = 0;
 let editValuesInInpits = {
   text: '',
-  summ: 0
+  summ: 0,
+  date: ''
 };
 
 window.onload = init = () => {
@@ -73,7 +74,7 @@ const render = () => {
     container.appendChild(dateVal);
     const summVal = document.createElement('p');
     summVal.innerText = `${summ} p.`;
-    summVal.id ='summ';
+    summVal.id = 'summ';
     container.appendChild(summVal);
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
@@ -83,28 +84,21 @@ const render = () => {
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputVal, textVal);
       inputVal.focus();
-      inputVal.onblur = () => {
-        saveOneElem(index, 'text');
-      }
+      inputVal.onblur = () => saveOneElem(index, 'text');
     }
     summVal.ondblclick = () => {
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputSumm, summVal);
       inputSumm.focus();
-      inputSumm.onblur = () => {
-        saveOneElem(index, 'summ');
-      }
+      inputSumm.onblur = () => saveOneElem(index, 'summ');
     }
     dateVal.ondblclick = () => {
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputDate, dateVal);
       inputDate.focus();
-      inputDate.onblur = () => {
-        saveOneElem(index, 'date');
-      }
+      inputDate.onblur = () => saveOneElem(index, 'date');
     }
     imageEdit.onclick = () => {
-      
       imageEdit.className = 'far fa-check-square';
       imageDelete.className = 'fas fa-backspace';
       const [inputVal, inputSumm, inputDate] = editElement(item);
@@ -149,28 +143,27 @@ const handleChangeNameShop = (e, key) => {
 const saveChangesInShop = (index) => {
   const { text, summ, date } = editValuesInInpits;
   if (text !== '' && summ !== 0 && date !== '') {
-    allValues[index] = { ...allValues[index], text, summ, date: date.slice(0, 10).split('-').reverse().join('.') };
+    allValues[index] = { text, summ, date: date.slice(0, 10).split('-').reverse().join('.') };
     render();
   } else {
-    alert('error');
+    alert('field is empty. please fill it');
   }
 }
 
 const saveOneElem = (index, key) => {
   const { text, summ, date } = editValuesInInpits;
-  if (text !== '' || summ !== 0 || date !== '') {
-    switch (key) {
-      case 'date':
-        allValues[index] = { ...allValues[index], [key]: date.slice(0, 10).split('-').reverse().join('.') };
-        break;
-      default:
-        allValues[index] = { ...allValues[index], [key]: editValuesInInpits[key] };
+  if (text !== '' && summ !== 0 && date !== '') {
+    if (key === 'date') {
+      allValues[index] = { ...allValues[index], [key]: date.slice(0, 10).split('-').reverse().join('.') };
+    } else {
+      allValues[index] = { ...allValues[index], [key]: editValuesInInpits[key] };
     }
     render();
   } else {
-    alert(key, 'undefined');
+    alert('field is empty. please fill it');
   }
 }
+
 const counter = () => {
   const countRender = document.getElementById('countOf');
   countRender.innerText = count;

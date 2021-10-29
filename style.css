@@ -86,7 +86,7 @@ i {
 }
 
 .fa-edit {
-color: rgb(13, 190, 13);
+  color: rgb(13, 190, 13);
 }
 
 .fa-trash-alt {
@@ -114,8 +114,7 @@ color: rgb(13, 190, 13);
 #text {
   width: 30%;
   max-width: 30vw;
-  text-align: justify;
-  
+  text-align: justify;  
   word-wrap: break-word;
 }
 
@@ -126,8 +125,7 @@ color: rgb(13, 190, 13);
 
 #summ {
   width: 30%;
-  text-align: center;
-  
+  text-align: center;  
 }
 
 @media (max-width: 760px) {
@@ -141,6 +139,7 @@ color: rgb(13, 190, 13);
     width: 70%;
     margin: 10px;
   }
+  
   .main {
     height:100%;
   }
