@@ -4,6 +4,10 @@ let valueSumm = null;
 let input = null;
 let summ = null;
 let count = 0;
+let editValuesInInpits = {
+  text: '',
+  summ: 0
+};
 
 window.onload = init = () => {
   input = document.getElementById('input1');
@@ -19,29 +23,30 @@ const updateValue = (event) => {
 const updateSumm = (event) => {
   valueSumm = event.target.value;
 };
+const getDate = () => {
+  let today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const yyyy = today.getFullYear();
+  today = dd + '.' + mm + '.' + yyyy;
+  return today;
+}
 
-const getDay = () => {
-  let day = new Date();
-  const dd = String(day.getDate()).padStart(2, '0');
-  const mm = String(day.getMonth() + 1).padStart(2, '0');
-  const yyyy = day.getFullYear();
-  day = dd + '.' + mm + '.' + yyyy;
-  return day;
-};
+
 
 const onClickButton = () => {
   if (valueInput !== '' && valueSumm !== null && !isNaN(valueSumm)) {
     allValues.push({
       text: valueInput,
       summ: valueSumm,
-      date: getDay()
+      date: getDate()
     });
     valueInput = '';
     valueSumm = 0;
     input.value = '';
     summ.value = '';
     render();
-    };
+  };
 };
 
 const render = () => {
@@ -51,7 +56,7 @@ const render = () => {
   };
   count = null;
   allValues.map((item, index) => {
-    let { text, date, summ } = item;
+    const { text, date, summ } = item;
     const container = document.createElement('div');
     container.id = `value-${index}`;
     container.className = 'values-container';
@@ -68,63 +73,108 @@ const render = () => {
     container.appendChild(dateVal);
     const summVal = document.createElement('p');
     summVal.innerText = `${summ} p.`;
-    summVal.id = 'summ';
+    summVal.id ='summ';
     container.appendChild(summVal);
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
     container.appendChild(imageEdit);
-    const inputVal = document.createElement('input');
-    inputVal.value = textVal.innerText;
-    const inputSumm = document.createElement('input');
-    inputSumm.value = summ;
+    editValuesInInpits = item;
+    textVal.ondblclick = () => {
+      const [inputVal, inputSumm, inputDate] = editElement(item);
+      container.replaceChild(inputVal, textVal);
+      inputVal.focus();
+      inputVal.onblur = () => {
+        saveOneElem(index, 'text');
+      }
+    }
+    summVal.ondblclick = () => {
+      const [inputVal, inputSumm, inputDate] = editElement(item);
+      container.replaceChild(inputSumm, summVal);
+      inputSumm.focus();
+      inputSumm.onblur = () => {
+        saveOneElem(index, 'summ');
+      }
+    }
+    dateVal.ondblclick = () => {
+      const [inputVal, inputSumm, inputDate] = editElement(item);
+      container.replaceChild(inputDate, dateVal);
+      inputDate.focus();
+      inputDate.onblur = () => {
+        saveOneElem(index, 'date');
+      }
+    }
     imageEdit.onclick = () => {
+      
       imageEdit.className = 'far fa-check-square';
       imageDelete.className = 'fas fa-backspace';
-      changeText(inputVal, textVal, container);
-      changeText(inputSumm, summVal, container);
-      imageEdit.onclick = () => {
-        editText(textVal, inputVal, container, item);
-        editSumm(summVal, inputSumm, container, item);
-        render();
-      };
-      imageDelete.onclick = () => {
-        render();
-      };
-    };
+      const [inputVal, inputSumm, inputDate] = editElement(item);
+      container.replaceChild(inputVal, textVal);
+      container.replaceChild(inputDate, dateVal);
+      container.replaceChild(inputSumm, summVal);
+      imageEdit.onclick = () => saveChangesInShop(index);
+      imageDelete.onclick = () => render();
+    }
     const imageDelete = document.createElement('i');
     imageDelete.className = 'far fa-trash-alt';
     container.appendChild(imageDelete);
     imageDelete.onclick = () => {
       deleteVal(index);
-    };
+    }
     content.appendChild(container);
     count = count + Number(item.summ);
-    });
+  });
   counter();
-};
+}
 
+const editElement = (item) => {
+  const { text, summ, date } = item;
+  const inputVal = document.createElement('input');
+  inputVal.value = text;
+  inputVal.onchange = (e) => handleChangeNameShop(e, 'text');
+  const inputSumm = document.createElement('input');
+  inputSumm.type = 'number';
+  inputSumm.value = summ;
+  inputSumm.onchange = (e) => handleChangeNameShop(e, 'summ');
+  const inputDate = document.createElement('input');
+  inputDate.value = date;
+  inputDate.type = 'date';
+  inputDate.onchange = (e) => handleChangeNameShop(e, 'date');
+  return [inputVal, inputSumm, inputDate];
+}
+
+const handleChangeNameShop = (e, key) => {
+  editValuesInInpits = { ...editValuesInInpits, [key]: e.target.value };
+}
+
+const saveChangesInShop = (index) => {
+  const { text, summ, date } = editValuesInInpits;
+  if (text !== '' && summ !== 0 && date !== '') {
+    allValues[index] = { ...allValues[index], text, summ, date: date.slice(0, 10).split('-').reverse().join('.') };
+    render();
+  } else {
+    alert('error');
+  }
+}
+
+const saveOneElem = (index, key) => {
+  const { text, summ, date } = editValuesInInpits;
+  if (text !== '' || summ !== 0 || date !== '') {
+    switch (key) {
+      case 'date':
+        allValues[index] = { ...allValues[index], [key]: date.slice(0, 10).split('-').reverse().join('.') };
+        break;
+      default:
+        allValues[index] = { ...allValues[index], [key]: editValuesInInpits[key] };
+    }
+    render();
+  } else {
+    alert(key, 'undefined');
+  }
+}
 const counter = () => {
   const countRender = document.getElementById('countOf');
-  countRender.innerText = count;  
+  countRender.innerText = count;
 };
-
-const changeText = (input, text, container) => {
-  container.replaceChild(input, text);
-};
-
-const editText = (textVal, inputVal, container, item) => {
-  textVal.innerText = inputVal.value;
-    item.text = inputVal.value;
-    container.replaceChild(textVal, inputVal);    
-}
-
-const editSumm = (summVal, inputSumm, container, item) => {
-  if (!isNaN(inputSumm.value)) {
-    summVal.innerText = `${inputSumm.value} p.`;
-    item.summ = inputSumm.value;
-    container.replaceChild(summVal, inputSumm);   
-  };
-}
 
 const deleteVal = (index) => {
   allValues = allValues.filter((item, index1) => (index1 !== index));

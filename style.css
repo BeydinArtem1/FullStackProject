@@ -47,7 +47,7 @@ button {
   font-size: 20px;
   padding: 4px;
   height: 30px;
-  background-color: rgb(85, 207, 85);
+  background: linear-gradient( to top, rgb(47, 105, 47), rgb(106, 255, 37) );
   border: none;
   border-radius: 5px;
 }
@@ -65,16 +65,16 @@ button {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   margin: 5px;
-  height: 10%;
+  min-height: 10%;
 }
 
 #content {
   display: flex;
   flex-direction: column;
   font-size: 24px;
-  width: 60vw;
+  width: 70vw;
   overflow-y: hidden;
   height: 50vh;
   align-items: stretch;
@@ -82,8 +82,23 @@ button {
 }
 
 i {
-  font-size: 24px;
-  color: blueviolet;
+  font-size: 30px;  
+}
+
+.fa-edit {
+color: rgb(13, 190, 13);
+}
+
+.fa-trash-alt {
+  color: tomato;
+}
+
+.fa-check-square {
+  color: rgb(13, 190, 13); 
+}
+
+.fa-backspace {
+  color: tomato;
 }
 
 #countOf {
@@ -98,8 +113,10 @@ i {
 
 #text {
   width: 30%;
-  text-align: center;
-  overflow-y: scroll;
+  max-width: 30vw;
+  text-align: justify;
+  
+  word-wrap: break-word;
 }
 
 #date {
@@ -110,5 +127,25 @@ i {
 #summ {
   width: 30%;
   text-align: center;
-  overflow-y: scroll;
+  
+}
+
+@media (max-width: 760px) {
+  .main-div {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;    
+  }
+
+  .first-input, .second-input {
+    width: 70%;
+    margin: 10px;
+  }
+  .main {
+    height:100%;
+  }
+
+  button {
+    margin-left: 30%;
+  }
 }
