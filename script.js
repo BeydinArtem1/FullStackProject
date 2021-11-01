@@ -6,15 +6,21 @@ let summ = null;
 let count = 0;
 let editValuesInInpits = {
   text: '',
-  summ: 0,
+  summ: null,
   date: ''
 };
 
-window.onload = init = () => {
+window.onload = init = async () => {
   input = document.getElementById('input1');
   input.addEventListener('change', updateValue);
   summ = document.getElementById('input2');
   summ.addEventListener('change', updateSumm);
+  const resp = await fetch('http://localhost:8000/getAll', {
+    method: 'GET'
+  });
+  let result = await resp.json();
+  allValues = result.data;
+  render();
 };
 
 const updateValue = (event) => {
@@ -33,17 +39,24 @@ const getDate = () => {
   return today;
 }
 
-
-
-const onClickButton = () => {
+const onClickButton = async () => {
   if (valueInput !== '' && valueSumm !== null && !isNaN(valueSumm)) {
-    allValues.push({
-      text: valueInput,
-      summ: valueSumm,
-      date: getDate()
+    const resp = await fetch('http://localhost:8000/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        text: valueInput,
+        summ: valueSumm,
+        date: getDate()
+      })
     });
+    const result = await resp.json();
+    allValues.push(result.data);
     valueInput = '';
-    valueSumm = 0;
+    valueSumm = null;
     input.value = '';
     summ.value = '';
     render();
@@ -140,23 +153,63 @@ const handleChangeNameShop = (e, key) => {
   editValuesInInpits = { ...editValuesInInpits, [key]: e.target.value };
 }
 
-const saveChangesInShop = (index) => {
+const saveChangesInShop = async (index) => {
   const { text, summ, date } = editValuesInInpits;
+
   if (text !== '' && summ !== 0 && date !== '') {
-    allValues[index] = { text, summ, date: date.slice(0, 10).split('-').reverse().join('.') };
-    render();
+  const resp = await fetch(`http://localhost:8000/update`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      'Access-Control-Allow-Origin': '*'
+    },
+    body: JSON.stringify({
+      _id: allValues[index]._id,
+      text,
+      summ,
+      date: date.slice(0, 10).split('-').reverse().join('.')
+    })
+  });
+  const result = await resp.json();
+  allValues = result.data; 
+  render();
   } else {
     alert('field is empty. please fill it');
   }
 }
 
-const saveOneElem = (index, key) => {
+const saveOneElem = async (index, key) => {
   const { text, summ, date } = editValuesInInpits;
   if (text !== '' && summ !== 0 && date !== '') {
     if (key === 'date') {
-      allValues[index] = { ...allValues[index], [key]: date.slice(0, 10).split('-').reverse().join('.') };
+      const resp = await fetch(`http://localhost:8000/update`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          _id: allValues[index]._id,          
+          date: date.slice(0, 10).split('-').reverse().join('.')
+        })
+      });
+      const result = await resp.json();
+      allValues = result.data;
     } else {
-      allValues[index] = { ...allValues[index], [key]: editValuesInInpits[key] };
+      const resp = await fetch(`http://localhost:8000/update`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          _id: allValues[index]._id,
+          text,
+          summ          
+        })
+      });
+      const result = await resp.json();
+      allValues = result.data;
     }
     render();
   } else {
@@ -169,7 +222,11 @@ const counter = () => {
   countRender.innerText = count;
 };
 
-const deleteVal = (index) => {
-  allValues = allValues.filter((item, index1) => (index1 !== index));
+const deleteVal = async (index) => {
+  const resp = await fetch(`http://localhost:8000/delete?_id=${allValues[index]._id}`, {
+    method: 'DELETE',
+  });
+  const result = await resp.json();
+  allValues = result.data;
   render();
 };
