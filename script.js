@@ -18,7 +18,7 @@ window.onload = init = async () => {
   const resp = await fetch('http://localhost:8000/getAll', {
     method: 'GET'
   });
-  let result = await resp.json();
+  const result = await resp.json();
   allValues = result.data;
   render();
 };
@@ -60,7 +60,9 @@ const onClickButton = async () => {
     input.value = '';
     summ.value = '';
     render();
-  };
+  } else {
+    alert('field is invalid. please fill it correctly')
+  }
 };
 
 const render = () => {
@@ -69,8 +71,8 @@ const render = () => {
     content.removeChild(content.firstChild);
   };
   count = null;
-  allValues.map((item, index) => {
-    const { text, date, summ } = item;
+  allValues.map((item, index) => {    
+    const { text, date, summ, _id } = item;
     const container = document.createElement('div');
     container.id = `value-${index}`;
     container.className = 'values-container';
@@ -92,26 +94,29 @@ const render = () => {
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
     container.appendChild(imageEdit);
-    editValuesInInpits = item;
     textVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputVal, textVal);
       inputVal.focus();
-      inputVal.onblur = () => saveOneElem(index, 'text');
+      inputVal.onblur = () => saveChangesInShop(index);
     }
     summVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputSumm, summVal);
       inputSumm.focus();
-      inputSumm.onblur = () => saveOneElem(index, 'summ');
+      inputSumm.onblur = () => saveChangesInShop(index);
     }
     dateVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
       container.replaceChild(inputDate, dateVal);
       inputDate.focus();
-      inputDate.onblur = () => saveOneElem(index, 'date');
+      inputDate.onblur = () => saveChangesInShop(index);
     }
     imageEdit.onclick = () => {
+      editValuesInInpits = item;
       imageEdit.className = 'far fa-check-square';
       imageDelete.className = 'fas fa-backspace';
       const [inputVal, inputSumm, inputDate] = editElement(item);
@@ -132,7 +137,6 @@ const render = () => {
   });
   counter();
 }
-
 const editElement = (item) => {
   const { text, summ, date } = item;
   const inputVal = document.createElement('input');
@@ -150,67 +154,27 @@ const editElement = (item) => {
 }
 
 const handleChangeNameShop = (e, key) => {
-  editValuesInInpits = { ...editValuesInInpits, [key]: e.target.value };
+  editValuesInInpits = { ...editValuesInInpits, [key]: e.target.value};
 }
 
 const saveChangesInShop = async (index) => {
-  const { text, summ, date } = editValuesInInpits;
-
+  const { _id, text, summ, date } = editValuesInInpits;  
   if (text !== '' && summ !== 0 && date !== '') {
-  const resp = await fetch(`http://localhost:8000/update`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({
-      _id: allValues[index]._id,
-      text,
-      summ,
-      date: date.slice(0, 10).split('-').reverse().join('.')
-    })
-  });
-  const result = await resp.json();
-  allValues = result.data; 
-  render();
-  } else {
-    alert('field is empty. please fill it');
-  }
-}
-
-const saveOneElem = async (index, key) => {
-  const { text, summ, date } = editValuesInInpits;
-  if (text !== '' && summ !== 0 && date !== '') {
-    if (key === 'date') {
-      const resp = await fetch(`http://localhost:8000/update`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          _id: allValues[index]._id,          
-          date: date.slice(0, 10).split('-').reverse().join('.')
-        })
-      });
-      const result = await resp.json();
-      allValues = result.data;
-    } else {
-      const resp = await fetch(`http://localhost:8000/update`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          _id: allValues[index]._id,
-          text,
-          summ          
-        })
-      });
-      const result = await resp.json();
-      allValues = result.data;
-    }
+    const resp = await fetch(`http://localhost:8000/update`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id,
+        text,
+        summ,
+        date: date.slice(0, 10).split('-').reverse().join('.')
+      })
+    });
+    const result = await resp.json();
+    allValues = result.data;
     render();
   } else {
     alert('field is empty. please fill it');
