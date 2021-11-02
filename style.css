@@ -59,16 +59,16 @@ button {
   align-items: center;
   font-size: 24px;
   margin: 10px;
+  
 }
 
 .values-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin: 5px;
-  min-height: 10%;
-}
+  }
 
 #content {
   display: flex;
@@ -76,9 +76,13 @@ button {
   font-size: 24px;
   width: 70vw;
   overflow-y: hidden;
-  height: 50vh;
+  max-height: 50vh;
   align-items: stretch;
   justify-content: flex-start;
+}
+
+#content:hover {
+  overflow-y: auto; 
 }
 
 i {
@@ -112,39 +116,119 @@ i {
 }
 
 #text {
-  width: 30%;
+  width: 90%;
   max-width: 30vw;
   text-align: justify;  
   word-wrap: break-word;
+  margin: 0;
 }
 
 #date {
-  width: 15%;
+  width: 45%;
   text-align: center;
+  margin: 0;
 }
 
 #summ {
-  width: 30%;
+  width: 45%;
   text-align: center;  
+  margin: 0;
 }
 
-@media (max-width: 760px) {
+.button-div {
+  width:10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.name-div {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  width:30%;
+  align-items: center;
+}
+
+.value-div input {
+  width:45%;
+}
+
+.name-div input {
+  width:90%;
+}
+
+.num {
+  margin: 4px;
+}
+
+.value-div {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  width:70%;
+  align-items: center;
+}
+
+@media (max-width: 1030px) {
   .main-div {
     flex-direction: column;
     justify-content: center;
-    align-items: center;    
+    align-items: center;   
+    width: 80%; 
   }
 
   .first-input, .second-input {
-    width: 70%;
+    width: 100%;
     margin: 10px;
+  }
+
+  #input1, #input2 {
+    width: 100%;
   }
   
   .main {
     height:100%;
+    align-items: center;
   }
 
   button {
-    margin-left: 30%;
+    margin-left: 85%;
+  }
+
+  #content {
+    width:80%; 
+    font-size: 20px;
+  }
+
+  .name-div {
+    width: 65%;
+    justify-content: space-between;
+  }
+
+  #date, #summ, .button-div {
+    width:100%;
+    margin: 5px;    
+  }  
+
+  .value-div {
+    width:35%;
+    flex-direction: column;
+  }
+
+  .value-div input {
+    width:90%;
+    align-items: center;
+    height:100%;
+  }
+
+}
+
+@media (max-width: 430px) {
+  button {
+    margin-left: 70%;
+  }
+  #content {
+    max-height: 36vh;
   }
 }

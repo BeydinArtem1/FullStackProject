@@ -10,19 +10,25 @@ let editValuesInInpits = {
   date: ''
 };
 
-window.onload = init = () => {
+window.onload = init = async () => {
   input = document.getElementById('input1');
   input.addEventListener('change', updateValue);
   summ = document.getElementById('input2');
   summ.addEventListener('change', updateSumm);
+  const resp = await fetch('http://localhost:8000/getAll', {
+    method: 'GET'
+  });
+  const result = await resp.json();
+  allValues = result.data;
+  render();
 };
 
 const updateValue = (event) => {
-  valueInput = event.target.value;
+  valueInput = (event.target.value).trim();
 };
 
 const updateSumm = (event) => {
-  valueSumm = event.target.value;
+  valueSumm = (event.target.value).trim();
 };
 const getDate = () => {
   let today = new Date();
@@ -33,21 +39,30 @@ const getDate = () => {
   return today;
 }
 
-
-
-const onClickButton = () => {
-  if (valueInput !== '' && valueSumm !== null && !isNaN(valueSumm)) {
-    allValues.push({
-      text: valueInput,
-      summ: valueSumm,
-      date: getDate()
+const onClickButton = async () => {
+  if (valueInput.trim() !== '' && valueSumm !== null && !isNaN(valueSumm)) {
+    const resp = await fetch('http://localhost:8000/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        text: valueInput,
+        summ: valueSumm,
+        date: getDate()
+      })
     });
+    const result = await resp.json();
+    allValues.push(result.data);
     valueInput = '';
     valueSumm = 0;
     input.value = '';
     summ.value = '';
     render();
-  };
+  } else {
+    alert('field is invalid. please fill it correctly');
+  }
 };
 
 const render = () => {
@@ -57,60 +72,73 @@ const render = () => {
   };
   count = null;
   allValues.map((item, index) => {
-    const { text, date, summ } = item;
+    const { text, date, summ, _id } = item;
     const container = document.createElement('div');
     container.id = `value-${index}`;
     container.className = 'values-container';
     const num = document.createElement('p');
-    num.innerText = `${index + 1})`
-    container.appendChild(num);
+    num.innerText = `${index + 1})`;
+    num.className = 'num'
     const textVal = document.createElement('p');
     textVal.innerText = text;
     textVal.id = 'text';
-    container.appendChild(textVal);
+    const textDiv = document.createElement('div');
+    textDiv.className = 'name-div';
+    textDiv.appendChild(num);
+    textDiv.appendChild(textVal);
+    container.appendChild(textDiv);
     const dateVal = document.createElement('p');
     dateVal.innerText = date;
     dateVal.id = 'date';
-    container.appendChild(dateVal);
     const summVal = document.createElement('p');
     summVal.innerText = `${summ} p.`;
     summVal.id = 'summ';
-    container.appendChild(summVal);
+    const valuesDiv = document.createElement('div');
+    valuesDiv.className = 'value-div';
+    valuesDiv.appendChild(dateVal);
+    valuesDiv.appendChild(summVal);
+    container.appendChild(valuesDiv);
     const imageEdit = document.createElement('i');
     imageEdit.className = 'far fa-edit';
-    container.appendChild(imageEdit);
-    editValuesInInpits = item;
+    const buttomsDiv = document.createElement('div');
+    buttomsDiv.className = 'button-div';
+    buttomsDiv.appendChild(imageEdit);
     textVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
-      container.replaceChild(inputVal, textVal);
+      textDiv.replaceChild(inputVal, textVal);
       inputVal.focus();
-      inputVal.onblur = () => saveOneElem(index, 'text');
+      inputVal.onblur = () => saveChangesInShop(index);
     }
     summVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
-      container.replaceChild(inputSumm, summVal);
+      valuesDiv.replaceChild(inputSumm, summVal);
       inputSumm.focus();
-      inputSumm.onblur = () => saveOneElem(index, 'summ');
+      inputSumm.onblur = () => saveChangesInShop(index);
     }
     dateVal.ondblclick = () => {
+      editValuesInInpits = item;
       const [inputVal, inputSumm, inputDate] = editElement(item);
-      container.replaceChild(inputDate, dateVal);
+      valuesDiv.replaceChild(inputDate, dateVal);
       inputDate.focus();
-      inputDate.onblur = () => saveOneElem(index, 'date');
+      inputDate.onblur = () => saveChangesInShop(index);
     }
     imageEdit.onclick = () => {
+      editValuesInInpits = item;
       imageEdit.className = 'far fa-check-square';
       imageDelete.className = 'fas fa-backspace';
       const [inputVal, inputSumm, inputDate] = editElement(item);
-      container.replaceChild(inputVal, textVal);
-      container.replaceChild(inputDate, dateVal);
-      container.replaceChild(inputSumm, summVal);
+      textDiv.replaceChild(inputVal, textVal);
+      valuesDiv.replaceChild(inputDate, dateVal);
+      valuesDiv.replaceChild(inputSumm, summVal);
       imageEdit.onclick = () => saveChangesInShop(index);
       imageDelete.onclick = () => render();
     }
     const imageDelete = document.createElement('i');
     imageDelete.className = 'far fa-trash-alt';
-    container.appendChild(imageDelete);
+    buttomsDiv.appendChild(imageDelete);
+    valuesDiv.appendChild(buttomsDiv);
     imageDelete.onclick = () => {
       deleteVal(index);
     }
@@ -119,7 +147,6 @@ const render = () => {
   });
   counter();
 }
-
 const editElement = (item) => {
   const { text, summ, date } = item;
   const inputVal = document.createElement('input');
@@ -137,27 +164,31 @@ const editElement = (item) => {
 }
 
 const handleChangeNameShop = (e, key) => {
-  editValuesInInpits = { ...editValuesInInpits, [key]: e.target.value };
-}
-
-const saveChangesInShop = (index) => {
-  const { text, summ, date } = editValuesInInpits;
-  if (text !== '' && summ !== 0 && date !== '') {
-    allValues[index] = { text, summ, date: date.slice(0, 10).split('-').reverse().join('.') };
-    render();
+  if (e.target.value.trim() !== '' && e.target.value !== null) {
+    editValuesInInpits = { ...editValuesInInpits, [key]: (e.target.value).trim() };
   } else {
     alert('field is empty. please fill it');
   }
 }
 
-const saveOneElem = (index, key) => {
-  const { text, summ, date } = editValuesInInpits;
-  if (text !== '' && summ !== 0 && date !== '') {
-    if (key === 'date') {
-      allValues[index] = { ...allValues[index], [key]: date.slice(0, 10).split('-').reverse().join('.') };
-    } else {
-      allValues[index] = { ...allValues[index], [key]: editValuesInInpits[key] };
-    }
+const saveChangesInShop = async (index) => {
+  const { _id, text, summ, date } = editValuesInInpits;
+  if (text !== '' && summ !== null && date !== '') {
+    const resp = await fetch(`http://localhost:8000/update`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id,
+        text,
+        summ,
+        date: date.slice(0, 10).split('-').reverse().join('.')
+      })
+    });
+    const result = await resp.json();
+    allValues = result.data;
     render();
   } else {
     alert('field is empty. please fill it');
@@ -169,7 +200,11 @@ const counter = () => {
   countRender.innerText = count;
 };
 
-const deleteVal = (index) => {
-  allValues = allValues.filter((item, index1) => (index1 !== index));
+const deleteVal = async (index) => {
+  const resp = await fetch(`http://localhost:8000/delete?_id=${allValues[index]._id}`, {
+    method: 'DELETE',
+  });
+  const result = await resp.json();
+  allValues = result.data;
   render();
 };
