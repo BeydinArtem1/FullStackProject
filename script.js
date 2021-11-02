@@ -61,7 +61,7 @@ const onClickButton = async () => {
     summ.value = '';
     render();
   } else {
-    console.log('field is invalid. please fill it correctly');
+    alert('field is invalid. please fill it correctly');
   }
 };
 
@@ -166,7 +166,7 @@ const editElement = (item) => {
 const handleChangeNameShop = (e, key) => {
   editValuesInInpits = { ...editValuesInInpits, [key]: (e.target.value).trim() };
 }
-  
+
 const saveChangesInShop = async (index) => {
   const { _id, text, summ, date } = editValuesInInpits;
   if (text && summ && date) {
@@ -187,7 +187,7 @@ const saveChangesInShop = async (index) => {
     allValues = result.data;
     render();
   } else {
-    console.log('field is empty. please fill it');
+    alert('field is empty. please fill it');
   }
 }
 
