@@ -40,7 +40,7 @@ const getDate = () => {
 }
 
 const onClickButton = async () => {
-  if (valueInput.trim() !== '' && valueSumm !== null && !isNaN(valueSumm)) {
+  if (valueInput.trim() && valueSumm && !isNaN(valueSumm)) {
     const resp = await fetch('http://localhost:8000/create', {
       method: 'POST',
       headers: {
@@ -61,7 +61,7 @@ const onClickButton = async () => {
     summ.value = '';
     render();
   } else {
-    alert('field is invalid. please fill it correctly');
+    console.log('field is invalid. please fill it correctly');
   }
 };
 
@@ -78,7 +78,7 @@ const render = () => {
     container.className = 'values-container';
     const num = document.createElement('p');
     num.innerText = `${index + 1})`;
-    num.className = 'num'
+    num.className = 'num';
     const textVal = document.createElement('p');
     textVal.innerText = text;
     textVal.id = 'text';
@@ -164,16 +164,12 @@ const editElement = (item) => {
 }
 
 const handleChangeNameShop = (e, key) => {
-  if (e.target.value.trim() !== '' && e.target.value !== null) {
-    editValuesInInpits = { ...editValuesInInpits, [key]: (e.target.value).trim() };
-  } else {
-    alert('field is empty. please fill it');
-  }
+  editValuesInInpits = { ...editValuesInInpits, [key]: (e.target.value).trim() };
 }
-
+  
 const saveChangesInShop = async (index) => {
   const { _id, text, summ, date } = editValuesInInpits;
-  if (text !== '' && summ !== null && date !== '') {
+  if (text && summ && date) {
     const resp = await fetch(`http://localhost:8000/update`, {
       method: 'PATCH',
       headers: {
@@ -191,7 +187,7 @@ const saveChangesInShop = async (index) => {
     allValues = result.data;
     render();
   } else {
-    alert('field is empty. please fill it');
+    console.log('field is empty. please fill it');
   }
 }
 
