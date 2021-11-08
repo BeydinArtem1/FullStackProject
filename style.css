@@ -3,8 +3,7 @@ body {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color: #657580;
-  width: 100%;
+  background-color: #657580;  
 }
 
 .first-input,
@@ -22,16 +21,16 @@ body {
 
 #input1,
 #input2 {
-  width: 85%;
-  font-size: 16px;
+  width: 95%;
+  font-size: 20px;
   border-radius: 6px;
   border: none;
-  height: 30px;
+  height: 45px;
 }
 
 .first-input p,
 .second-input p {
-  font-size: 18px;
+  font-size: 22px;
   margin: 0;
   margin-bottom: 10px;
 }
@@ -46,10 +45,12 @@ body {
 button {
   font-size: 20px;
   padding: 4px;
-  height: 30px;
+  height: 45px;
   background: linear-gradient( to top, rgb(47, 105, 47), rgb(106, 255, 37) );
   border: none;
   border-radius: 5px;
+  width: 115px;
+  color: rgb(27, 78, 27);
 }
 
 #count-container {
@@ -75,7 +76,7 @@ button {
   font-size: 24px;
   width: 70vw;
   overflow-y: hidden;
-  max-height: 50vh;
+  max-height: 70vh;
   align-items: stretch;
   justify-content: flex-start;
 }
@@ -225,7 +226,11 @@ i {
 
 @media (max-width: 430px) {
   button {
-    margin-left: 70%;
+    margin-left: 62%;
+  }
+
+  .counter {
+    width: 90%;
   }
   
   #content {

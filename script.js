@@ -157,7 +157,7 @@ const editElement = (item) => {
   inputSumm.value = summ;
   inputSumm.onchange = (e) => handleChangeNameShop(e, 'summ');
   const inputDate = document.createElement('input');
-  inputDate.value = date;
+  inputDate.value = date.slice(0, 10).split('.').reverse().join('-');;
   inputDate.type = 'date';
   inputDate.onchange = (e) => handleChangeNameShop(e, 'date');
   return [inputVal, inputSumm, inputDate];
